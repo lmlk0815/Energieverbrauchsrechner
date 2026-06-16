@@ -992,12 +992,57 @@ function update() {
     rb.textContent = `+ ${fmtF(delta_k, 2)} €/Jahr`;
     rsub.textContent = `Dein Verbrauch: ${fmt(e_user_total)} kWh/Jahr · Ø: ${fmt(AVG_KWH + AVG_HEAT)} kWh/Jahr · Du verbrauchst ${fmt(delta_e)} kWh mehr`;
 
-    const co2Extra = delta_e * CO2_FACTOR;
-    iw.innerHTML = `<div class="no-saving">
-      🌍 Dein Mehrverbrauch erzeugt zusätzlich ca. <b>${fmtF(co2Extra,1)} kg CO₂</b> pro Jahr.<br>
-      💡 Tipp: Reduziere Standby-Geräte, kürze Duschzeit oder senke die Raumtemperatur um 1–2 °C – das spart am meisten!<br>
-      💰 Deine Jahreskosten: <b>${fmtF(k_user,2)} €</b> · Ø Sachsen: <b>${fmtF(k_avg,2)} €</b>
-    </div>`;
+    const co2Extra  = delta_e * CO2_FACTOR;
+    const extraCost = delta_k; // €/Jahr Mehrkosten
+
+    // "Was könnte man stattdessen damit machen?"
+    // PC gaming hours (0.15 kW): delta_e / 0.15 h
+    const pcHours      = (delta_e / 0.15).toFixed(0);
+    // Smartphone charges (0.027 kWh each)
+    const phoneCharges = (delta_e / 0.027).toFixed(0);
+    // Streaming hours (0.08 kW)
+    const tvHours      = (delta_e / 0.08).toFixed(0);
+    // Pizza baking: ~0.9 kWh per pizza (oven 1.8 kW, 30 min)
+    const pizzas       = (delta_e / 0.9).toFixed(0);
+    // Washing machine cycles (0.85 kWh each)
+    const washCycles   = (delta_e / 0.85).toFixed(0);
+    // Car km equivalent
+    const kmEquiv      = (delta_e / CAR_KWH_PER_KM).toFixed(0);
+
+    iw.innerHTML = `
+      <div class="no-saving">
+        🌍 Dein Mehrverbrauch erzeugt zusätzlich ca. <b>${fmtF(co2Extra,1)} kg CO₂</b> pro Jahr. Das entspricht einer Autofahrt von ca. <b>${kmEquiv} km</b>.<br>
+        💰 Deine Jahreskosten: <b>${fmtF(delta_k + (AVG_KWH + AVG_HEAT)*apFactor + k_fixed - k_fixed,2)} €</b> · Ø Sachsen: <b>${fmtF(k_avg,2)} €</b>
+      </div>
+      <div style="margin-top:1rem;font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem;letter-spacing:0.1em;">
+        MIT DIESER EXTRA-ENERGIE KÖNNTE MAN STATTDESSEN …
+      </div>
+      <div class="insights">
+        <div class="insight-card">
+          <div class="i-icon">🎮</div>
+          <div class="i-text">… <span class="i-val">${pcHours} Stunden</span> Gaming am PC spielen (à 150 W)</div>
+        </div>
+        <div class="insight-card">
+          <div class="i-icon">📱</div>
+          <div class="i-text">… das Handy <span class="i-val">${phoneCharges}×</span> vollständig aufladen (à 27 Wh)</div>
+        </div>
+        <div class="insight-card">
+          <div class="i-icon">📺</div>
+          <div class="i-text">… <span class="i-val">${tvHours} Stunden</span> Serien streamen (à 80 W)</div>
+        </div>
+        <div class="insight-card">
+          <div class="i-icon">🍕</div>
+          <div class="i-text">… <span class="i-val">${pizzas} Pizzen</span> im Ofen backen (à 0,9 kWh)</div>
+        </div>
+        <div class="insight-card">
+          <div class="i-icon">👕</div>
+          <div class="i-text">… <span class="i-val">${washCycles} Wäschen</span> waschen (à 0,85 kWh, 60 °C)</div>
+        </div>
+        <div class="insight-card">
+          <div class="i-icon">💡</div>
+          <div class="i-text">Tipp: Standby reduzieren, kürzer duschen oder Temperatur um 1–2 °C senken spart am meisten!</div>
+        </div>
+      </div>`;
   }
 }
 
