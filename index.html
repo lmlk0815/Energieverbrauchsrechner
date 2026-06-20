@@ -965,8 +965,8 @@ function update() {
     rs.className = 'result-section saving';
     rb.className = 'result-big saving';
     rl.textContent = '🎉 Du sparst im Vergleich zum Durchschnitt:';
-    rb.textContent = `– ${fmtF(Math.abs(delta_k), 2)} €/Jahr`;
-    rsub.textContent = `Dein Verbrauch: ${fmt(e_user_total)} kWh/Jahr · Ø: ${fmt(AVG_KWH + AVG_HEAT)} kWh/Jahr · Du verbrauchst ${fmt(Math.abs(delta_e))} kWh weniger`;
+    rb.textContent = `– ${fmt(Math.abs(delta_e))} kWh/Jahr`;
+    rsub.textContent = `Das entspricht ${fmtF(Math.abs(delta_k), 2)} € weniger pro Jahr · Dein Verbrauch: ${fmt(e_user_total)} kWh · Ø: ${fmt(AVG_KWH + AVG_HEAT)} kWh`;
 
     const savedPerYear = Math.abs(delta_k);
     const yearsForPhone = savedPerYear > 0 ? (PHONE_PRICE / savedPerYear) : null;
@@ -976,11 +976,11 @@ function update() {
 
     let html = '<div class="insights">';
     if (yearsForPhone !== null) {
-      html += `<div class="insight-card"><div class="i-icon">📱</div><div class="i-text">Mit dieser Einsparung kannst du dir in <span class="i-val">${fmtF(yearsForPhone,1)} Jahren</span> ein High-End-Smartphone (1500 €) kaufen.</div></div>`;
+      html += `<div class="insight-card"><div class="i-icon">📱</div><div class="i-text">Die gesparten <b>${fmt(Math.abs(delta_e))} kWh</b> (≈ ${fmtF(savedPerYear,2)} €/Jahr) reichen in <span class="i-val">${fmtF(yearsForPhone,1)} Jahren</span> für ein High-End-Smartphone (1500 €).</div></div>`;
     }
     html += `<div class="insight-card"><div class="i-icon">🚗</div><div class="i-text">Mit der gesparten Energie könnte man <span class="i-val">${fmt(kmEquiv)} km</span> mit einem Durchschnitts-Auto fahren.</div></div>`;
     html += `<div class="insight-card"><div class="i-icon">🌳</div><div class="i-text">Du sparst <span class="i-val">${fmtF(co2Saved,1)} kg CO₂</span> – so viel, wie ${trees_equiv} Bäume in einem Jahr aufnehmen.</div></div>`;
-    html += `<div class="insight-card"><div class="i-icon">⚡</div><div class="i-text">Dein Strom: <span class="i-val">${fmtF(k_user,2)} €/Jahr</span><br>Ø Sachsen: <span class="i-val">${fmtF(k_avg,2)} €/Jahr</span></div></div>`;
+    html += `<div class="insight-card"><div class="i-icon">⚡</div><div class="i-text">Dein Verbrauch: <span class="i-val">${fmt(e_user_total)} kWh/Jahr</span><br>Kosten: ${fmtF(k_user,2)} € · Ø: ${fmtF(k_avg,2)} €</div></div>`;
     html += '</div>';
     iw.innerHTML = html;
 
@@ -989,8 +989,8 @@ function update() {
     rs.className = 'result-section spending';
     rb.className = 'result-big spending';
     rl.textContent = '⚠️ Du verbrauchst mehr als der Durchschnitt:';
-    rb.textContent = `+ ${fmtF(delta_k, 2)} €/Jahr`;
-    rsub.textContent = `Dein Verbrauch: ${fmt(e_user_total)} kWh/Jahr · Ø: ${fmt(AVG_KWH + AVG_HEAT)} kWh/Jahr · Du verbrauchst ${fmt(delta_e)} kWh mehr`;
+    rb.textContent = `+ ${fmt(delta_e)} kWh/Jahr`;
+    rsub.textContent = `Das entspricht ${fmtF(delta_k, 2)} € mehr pro Jahr · Dein Verbrauch: ${fmt(e_user_total)} kWh · Ø: ${fmt(AVG_KWH + AVG_HEAT)} kWh`;
 
     const co2Extra  = delta_e * CO2_FACTOR;
     const extraCost = delta_k; // €/Jahr Mehrkosten
@@ -1011,8 +1011,7 @@ function update() {
 
     iw.innerHTML = `
       <div class="no-saving">
-        🌍 Dein Mehrverbrauch erzeugt zusätzlich ca. <b>${fmtF(co2Extra,1)} kg CO₂</b> pro Jahr. Das entspricht einer Autofahrt von ca. <b>${kmEquiv} km</b>.<br>
-        💰 Deine Jahreskosten: <b>${fmtF(delta_k + (AVG_KWH + AVG_HEAT)*apFactor + k_fixed - k_fixed,2)} €</b> · Ø Sachsen: <b>${fmtF(k_avg,2)} €</b>
+        🌍 Dein Mehrverbrauch von <b>${fmt(delta_e)} kWh</b> erzeugt zusätzlich ca. <b>${fmtF(co2Extra,1)} kg CO₂</b> pro Jahr – das entspricht einer Autofahrt von <b>${kmEquiv} km</b>.<br>💰 Mehrkosten: <b>${fmtF(delta_k,2)} €/Jahr</b> · Dein Verbrauch: <b>${fmt(e_user_total)} kWh</b> · Ø: <b>${fmt(AVG_KWH + AVG_HEAT)} kWh</b>
       </div>
       <div style="margin-top:1rem;font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem;letter-spacing:0.1em;">
         MIT DIESER EXTRA-ENERGIE KÖNNTE MAN STATTDESSEN …
